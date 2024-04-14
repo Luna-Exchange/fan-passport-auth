@@ -1,5 +1,5 @@
 {
-  "name": "fan-passport-auth",
+  "name": "@insomnia-labs/fan-passport-auth",
   "version": "1.0.0",
   "description": "Simple library to handle encryption and cecryption of volt tokens and sharing auth to ICC fan passport application",
   "main": "dist/index.js",

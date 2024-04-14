@@ -4,3 +4,5 @@ export type EncryptTokenArg = {
   email: string;
   tenantId: string;
 };
+
+export type Environment = "staging" | "production" | "development";
