@@ -9,7 +9,7 @@ encryption users access token, decrypt the access token, and revoke the users ac
 To install the package, run the following command in your project directory:
 
 ```bash
-npm install fan-passport-auth
+npm i @insomnia-labs/fan-passport-auth
 ```
 
 ## Usage
