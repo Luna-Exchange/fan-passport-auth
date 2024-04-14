@@ -1,7 +1,7 @@
 
 # ICC Fan Passport Auth
 
-This npm package provides a set of utilities for managing ICC tokens and authentication for the fan passport application. It facilitates secure communication between the main ICC applications and the ICC Fan Passport application by handling user authentication tokens. It exposes methods to
+The `fan-passport-auth` library provides a class, `ICCPassportAuth`, that provides a set of utilities for managing ICC tokens and authentication for the fan passport application. It facilitates secure communication between the main ICC applications and the ICC Fan Passport application by handling user authentication tokens. It exposes methods to
 encryption users access token, decrypt the access token, and revoke the users access token. 
 
 ## Installation
@@ -14,63 +14,60 @@ npm install fan-passport-auth
 
 ## Usage
 
-First, import the functions you need from the package:
+### Initializing the Authentication Class
+
+Import the `ICCPassportAuth` class from the package and initialize it with the desired environment.
 
 ```javascript
-import { encryptToken, validateToken, revokeAccessToken } from 'fan-passport-auth';
+import { ICCPassportAuth } from 'fan-passport-auth';
+
+// Initialize with production environment
+const auth = new ICCPassportAuth("production"); //default is 'development'
 ```
 
 ### Encrypting a Token
 
-To encrypt a token for secure transmission to the ICC Fan Passport application:
+Use the `encryptToken` method to encrypt a user's volt token. This token can then be included in URLs for redirecting users to the fan passport application.
 
 ```javascript
-import { EncryptTokenArg } from 'fan-passport-auth/types';
-
-const tokenDetails: EncryptTokenArg = {
-  token: 'yourVoltTokenHere',
-  name: 'Samuel Olamide',
-  email: 'samuel@olami.de',
-  tenantId: 'tenantIdHere',
-};
-
-encryptToken(tokenDetails)
-  .then((encryptedToken) => {
-    console.log('Encrypted Token:', encryptedToken);
-  })
-  .catch((error) => {
-    console.error('Error encrypting token:', error);
+async function encryptUserToken() {
+  const encryptedToken = await auth.encryptToken({
+    token: "userVoltTokenHere",
+    name: "Samuel Olamide",
+    email: "samuel.olamide@domain.com",
+    tenantId: "user123"
   });
+
+  console.log("Encrypted Token:", encryptedToken);
+}
+encryptUserToken();
 ```
 
-### Validating a Token
+### Validating an Encrypted Token
 
-To validate an encrypted token and possibly create a user instance:
+After encrypting a token, use `validateToken` to validate the encrypted token and optionally create a user instance on the application.
 
 ```javascript
-validateToken('yourEncryptedTokenHere')
-  .then((response) => {
-    console.log('Token validation response:', response);
-  })
-  .catch((error) => {
-    console.error('Error validating token:', error);
-  });
+async function validateUserToken(encryptedToken) {
+  const accessToken = await auth.validateToken(encryptedToken);
+
+  console.log("Access Token:", accessToken);
+}
 ```
 
 ### Revoking an Access Token
 
-To revoke an access token when a user logs out of the ICC application:
+To log a user out and invalidate their session, use the `revokeAccessToken` method.
 
 ```javascript
-revokeAccessToken('yourAccessTokenHere')
-  .then((response) => {
-    console.log('Access token revoked successfully:', response);
-  })
-  .catch((error) => {
-    console.error('Error revoking access token:', error);
-  });
+async function revokeUserAccessToken(token) {
+  const response = await auth.revokeAccessToken(token);
+
+  console.log("Revoke Response:", response); // { message: 'Logged out successfully.' }
+}
 ```
 
 ## Support
 
 For issues or feature requests, please open an issue on the GitHub repository associated with this package.
+
