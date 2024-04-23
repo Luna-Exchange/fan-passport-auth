@@ -69,5 +69,5 @@ async function revokeUserAccessToken(token) {
 
 ## Support
 
-For issues or feature requests, please open an issue on the GitHub repository associated with this package.
+For issues or feature requests, please reach out to the insomnia team.
 
