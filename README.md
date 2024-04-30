@@ -22,7 +22,7 @@ Import the `ICCPassportAuth` class from the package and initialize it with the d
 import { ICCPassportAuth } from 'fan-passport-auth';
 
 // Initialize with production environment
-const auth = new ICCPassportAuth("production"); //default is 'development'
+const auth = new ICCPassportAuth("production"); 
 ```
 
 ### Encrypting a Token
@@ -35,7 +35,6 @@ async function encryptUserToken() {
     token: "userVoltTokenHere",
     name: "Samuel Olamide",
     email: "samuel.olamide@domain.com",
-    tenantId: "user123"
   });
 
   console.log("Encrypted Token:", encryptedToken);

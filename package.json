@@ -1,12 +1,13 @@
 {
   "name": "@insomnia-labs/fan-passport-auth",
-  "version": "2.0.1",
+  "version": "2.0.5",
   "description": "Simple library to handle encryption and decryption of volt tokens and sharing auth to ICC fan passport application",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc",
+    "publish": " npm run build && npm publish --access public"
   },
   "author": "Samuel Olamide (gold-olar)",
   "license": "ISC",

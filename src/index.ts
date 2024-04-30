@@ -1,8 +1,10 @@
 import { EncryptTokenArg, Environment } from "./types";
 import {
+  DEVELOPMENT,
   ICC_API_BASE_URL_DEV,
   ICC_API_BASE_URL_PROD,
   ICC_API_BASE_URL_STAGING,
+  STAGING,
 } from "./constants";
 
 /**
@@ -14,6 +16,7 @@ import {
  */
 export class ICCPassportAuth {
   private apiBaseURL: string;
+  private environment: Environment;
   private defaultHeaders: {
     accept: string;
     "Content-Type": string;
@@ -27,10 +30,14 @@ export class ICCPassportAuth {
       case "staging":
         this.apiBaseURL = ICC_API_BASE_URL_STAGING;
         break;
-      default:
+      case "development":
         this.apiBaseURL = ICC_API_BASE_URL_DEV;
+        break;
+      default:
+        this.apiBaseURL = ICC_API_BASE_URL_STAGING;
     }
 
+    this.environment = environment;
     this.defaultHeaders = {
       accept: "application/json",
       "Content-Type": "application/json",
@@ -45,33 +52,39 @@ export class ICCPassportAuth {
    * @param param0.token - The volt token to encrypt.
    * @param param0.name - The name of the user (firstName lastName).
    * @param param0.email - The email of the user.
-   * @param param0.tenantId - The username of the user (tenantId).
    *
-   * @returns - The encrypted jwt token, set to expire in one hour.
+   * @returns - The encrypted jwt token, set to expire in one hour OR null if there is an error.
    */
   async encryptToken({
     token,
     name,
     email,
-    tenantId,
-  }: EncryptTokenArg): Promise<string> {
-    const payload = {
-      authToken: token,
-      name,
-      email,
-      username: tenantId,
-    };
-    const response = await fetch(`${this.apiBaseURL}/auth/encode`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        ...this.defaultHeaders,
-      },
-    });
+  }: EncryptTokenArg): Promise<string | null> {
+    try {
+      const payload = {
+        authToken: token,
+        name,
+        email,
+      };
 
-    const encodedToken = await response.json();
+      const response = await fetch(`${this.apiBaseURL}/auth/encode`, {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          ...this.defaultHeaders,
+        },
+      });
 
-    return encodedToken.token;
+      const responseJson = await response.json();
+      const encodedToken = responseJson.data.token;
+
+      return encodedToken;
+    } catch (error) {
+      if ([DEVELOPMENT, STAGING].includes(this.environment)) {
+        console.log("Error encrypting token: ", error);
+      }
+      return null;
+    }
   }
 
   /**
@@ -79,19 +92,28 @@ export class ICCPassportAuth {
    * and creates a user instance on the fan passport application if necessary.
    *
    * @param token - The encrypted token to validate.
-   * @returns - The access token for the user.
+   * @returns - The access token for the user OR null if anything failed.
    */
-  async validateToken(token: string): Promise<string> {
-    const response = await fetch(`${this.apiBaseURL}/auth/login`, {
-      method: "POST",
-      body: JSON.stringify({ token }),
-      headers: {
-        ...this.defaultHeaders,
-      },
-    });
+  async validateToken(token: string): Promise<string | null> {
+    try {
+      const response = await fetch(`${this.apiBaseURL}/auth/login`, {
+        method: "POST",
+        body: JSON.stringify({ token }),
+        headers: {
+          ...this.defaultHeaders,
+        },
+      });
 
-    const validateResponseJson = await response.json();
-    return validateResponseJson.accessToken;
+      const responseJson = await response.json();
+      const accessToken = responseJson.data.accessToken;
+
+      return accessToken;
+    } catch (error) {
+      if ([DEVELOPMENT, STAGING].includes(this.environment)) {
+        console.log("Error encrypting token: ", error);
+      }
+      return null;
+    }
   }
 
   /**

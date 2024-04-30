@@ -10,7 +10,6 @@ describe("ICCPassportAuth", () => {
     token: mockToken,
     name: "John Doe",
     email: "john@example.com",
-    tenantId: "tenant123",
   };
 
   describe("encryptToken", () => {
