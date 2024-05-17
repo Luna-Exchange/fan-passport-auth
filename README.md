@@ -62,7 +62,7 @@ To log a user out and invalidate their session, use the `revokeAccessToken` meth
 async function revokeUserAccessToken(token) {
   const response = await auth.revokeAccessToken(token);
 
-  console.log("Revoke Response:", response); // { message: 'Logged out successfully.' }
+  console.log("Revoke Response:", response); // { statusCode: 200, message: 'Logged out successfully.' }
 }
 ```
 
